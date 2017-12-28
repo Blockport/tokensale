@@ -1,0 +1,20 @@
+{
+    "name" : "Blockport Token",
+    "symbol" : "BPT",
+    "maxTokenSupply" : 69440000e18,
+    "decimals" : 18,
+
+    "presaleCap" : 1666666666666666666667,
+    "presaleStartTimestamp" : 1514988000,
+    "presaleEndTimestamp" : 1516197600,
+    "presaleRatio" : 3840,
+
+    "crowdsaleCap" : 15000e18,
+    "crowdsaleGoal" : 415e18,
+    "crowdsaleStartTimestamp" : 1519912800,
+    "crowdsaleEndTimestamp" : 1522504800,
+    "crowdsaleRatio" : 2880,
+
+    "companyFundWallet" : "0xC0B9533525C58594ee6cF30F73aC88655B45F6b3",
+    "companyTokenVault" : "0xd1a9A2B2E79cbF9A5a55CcB0bE8D87a549885Ba4"
+}
