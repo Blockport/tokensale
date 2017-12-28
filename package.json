@@ -1,0 +1,29 @@
+{
+  "name": "blockport-tokensale",
+  "version": "1.0.0",
+  "description": "Blockport tokensale",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Blockport/tokensale.git"
+  },
+  "keywords": [
+    "ethereum",
+    "erc20",
+    "smart",
+    "contracts"
+  ],
+  "author": "wslyvh",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Blockport/tokensale/issues"
+  },
+  "homepage": "https://github.com/Blockport/tokensale#readme",
+  "dependencies": {
+    "truffle": "^4.0.4",
+    "truffle-hdwallet-provider": "0.0.3"
+  }
+}

@@ -1,2 +1,0 @@
-# tokensale
-Blockport tokensale
