@@ -10,9 +10,8 @@
     "presaleRatio" : 3840,
 
     "crowdsaleCap" : 15000e18,
-    "crowdsaleGoal" : 415e18,
-    "crowdsaleStartTimestamp" : 1519912800,
-    "crowdsaleEndTimestamp" : 1522504800,
+    "crowdsaleStartTimestamp" : 1516806000,
+    "crowdsaleEndTimestamp" : 1519830000,
     "crowdsaleRatio" : 2880,
 
     "companyFundWallet" : "0xC0B9533525C58594ee6cF30F73aC88655B45F6b3",

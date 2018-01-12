@@ -13,10 +13,10 @@ module.exports = function(deployer, network, accounts) {
     var refundVault = accounts[0];
 
     // Deploying..
-    deployer.deploy(SafeMath);
-    deployer.link(SafeMath, BlockportPresale);
-    var presaleRate = new web3.BigNumber(settings.presaleRatio);
-    deployer.deploy(BlockportToken, settings.maxTokenSupply).then(function() {
-        return deployer.deploy(BlockportPresale, settings.presaleCap, settings.presaleStartTimestamp, settings.presaleEndTimestamp, presaleRate, settings.companyFundWallet, BlockportToken.address);
-    });  
+    // deployer.deploy(SafeMath);
+    // deployer.link(SafeMath, BlockportPresale);
+    // var presaleRate = new web3.BigNumber(settings.presaleRatio);
+    // deployer.deploy(BlockportToken, settings.maxTokenSupply).then(function() {
+    //     return deployer.deploy(BlockportPresale, settings.presaleCap, settings.presaleStartTimestamp, settings.presaleEndTimestamp, presaleRate, settings.companyFundWallet, BlockportToken.address);
+    // });  
 };

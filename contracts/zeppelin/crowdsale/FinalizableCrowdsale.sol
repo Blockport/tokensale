@@ -22,7 +22,6 @@ contract FinalizableCrowdsale is Crowdsale, Ownable {
    */
   function finalize() onlyOwner public {
     require(!isFinalized);
-    require(hasEnded());
 
     finalization();
     Finalized();

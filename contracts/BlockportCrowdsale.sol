@@ -1,17 +1,18 @@
 pragma solidity ^0.4.13;
 
 import './BlockportToken.sol';
+import './CrowdsaleWhitelist.sol';
 import './zeppelin/lifecycle/Pausable.sol';
 import './zeppelin/crowdsale/CappedCrowdsale.sol';
-import './zeppelin/crowdsale/RefundableCrowdsale.sol';
+import './zeppelin/crowdsale/FinalizableCrowdsale.sol';
 
 
 /// @title Blockport Token - Token code for our Blockport.nl Project
 /// @author Jan Bolhuis, Wesley van Heije
-//  Version 3, december 2017
+//  Version 3, January 2018
 //  Based on Openzeppelin framework
 //
-//  The Crowdsale will start after the presalem which had a cap of 6.400.000 BPT Tokens
+//  The Crowdsale will start after the presale which had a cap of 6.400.000 BPT Tokens
 //  Minimum presale investment in Ether will be set at the start; calculated on a weekly avarage for an amount of ~ 1000 Euro
 //  Unsold presale tokens will be burnt. Implemented by using MintedToken.
 //  There is no bonus in the Crowdsale.
@@ -20,13 +21,16 @@ import './zeppelin/crowdsale/RefundableCrowdsale.sol';
 //  Mac cap for the crowdsale is 43,200,000 BPT
 // 
 //  
-contract BlockportCrowdsale is CappedCrowdsale, RefundableCrowdsale, Pausable {
+contract BlockportCrowdsale is CappedCrowdsale, FinalizableCrowdsale, CrowdsaleWhitelist, Pausable {
     using SafeMath for uint256;
 
     address public tokenAddress;
     address public teamVault;
     address public companyVault;
     uint256 public minimalInvestmentInWei = 0.1 ether;
+    uint256 public maxInvestmentInWei = 50 ether;
+    
+    mapping (address => uint256) internal invested;
 
     BlockportToken public bpToken;
 
@@ -44,17 +48,18 @@ contract BlockportCrowdsale is CappedCrowdsale, RefundableCrowdsale, Pausable {
     //@param ` _wallet - Multisig wallet the investments are being send to during presale
     //@param ` _tokenAddress - Token to be used, created outside the prsale contract  
     //@param ` _teamVault - Ether send to this contract will be stored  at this multisig wallet
-    function BlockportCrowdsale(uint256 _cap, uint256 _goal, uint256 _startTime, uint256 _endTime, uint256 _rate, address _wallet, address _tokenAddress, address _teamVault, address _companyVault) 
+    function BlockportCrowdsale(uint256 _cap, uint256 _startTime, uint256 _endTime, uint256 _rate, address _wallet, address _tokenAddress, address _teamVault, address _companyVault) 
         CappedCrowdsale(_cap)
-        RefundableCrowdsale(_goal)
-        FinalizableCrowdsale()
         Crowdsale(_startTime, _endTime, _rate, _wallet) public {
+            require(_tokenAddress != address(0));
+            require(_teamVault != address(0));
+            require(_companyVault != address(0));
+            
             tokenAddress = _tokenAddress;
             token = createTokenContract();
             teamVault = _teamVault;
             companyVault = _companyVault;
     }
-
 
     //@notice Function to cast the Capped (&mintable) token provided with the constructor to a blockporttoken that is mintabletoken.
     // This is a workaround to surpass an issue that Mintabletoken functions are not accessible in this contract.
@@ -64,12 +69,20 @@ contract BlockportCrowdsale is CappedCrowdsale, RefundableCrowdsale, Pausable {
         return BlockportToken(tokenAddress);
     }
 
+    // low level token purchase function
+    function buyTokens(address beneficiary) public payable {
+        invested[beneficiary] += msg.value;
+        super.buyTokens(beneficiary);
+    }
+
     // overriding Crowdsale#validPurchase to add extra cap logic
     // @return true if investors can buy at the moment
     function validPurchase() internal returns (bool) {
-        bool minimalInvested = msg.value >= minimalInvestmentInWei;
+        bool moreThanMinimalInvestment = msg.value >= minimalInvestmentInWei;
+        bool whitelisted = addressIsWhitelisted(msg.sender);
+        bool lessThanMaxInvestment = invested[msg.sender] <= maxInvestmentInWei;
 
-        return super.validPurchase() && minimalInvested && !paused;
+        return super.validPurchase() && moreThanMinimalInvestment && lessThanMaxInvestment && !paused && whitelisted;
     }
 
     //@notice Function overidden function will finanalise the Crowdsale
@@ -83,17 +96,18 @@ contract BlockportCrowdsale is CappedCrowdsale, RefundableCrowdsale, Pausable {
         token.mint(teamVault, twentyPercentAllocation);
         token.mint(companyVault, twentyPercentAllocation);
 
-        token.finishMinting();   // No more tokens can be added from now
-        bpToken.unpause();       // ERC20 transfer functions will work after this so trading can start.
-        super.finalization();    // finalise up i nthe tree
+        token.finishMinting();              // No more tokens can be added from now
+        bpToken.unpause();                  // ERC20 transfer functions will work after this so trading can start.
+        super.finalization();               // finalise up in the tree
+        
+        bpToken.transferOwnership(owner);   // transfer token Ownership back to original owner
     }
-
 
     //@notice Function sets the token conversion rate in this contract
     //@param ` __rateInWei - Price of 1 Blockport token in Wei. 
     //@param ` __capInWei - Price of 1 Blockport token in Wei. 
     function setRate(uint256 _rateInWei, uint256 _capInWei) public onlyOwner returns (bool) { 
-        require(startTime >= block.timestamp);
+        require(startTime > block.timestamp);
         require(_rateInWei > 0);
         require(_capInWei > 0);
 
@@ -108,7 +122,7 @@ contract BlockportCrowdsale is CappedCrowdsale, RefundableCrowdsale, Pausable {
     //@param ' _startTime - this is the place to adapt the presale period
     //@param ` _endTime - this is the place to adapt the presale period
     function setCrowdsaleDates(uint256 _startTime, uint256 _endTime) public onlyOwner returns (bool) { 
-        require(startTime >= block.timestamp); // current startTime in the future
+        require(startTime > block.timestamp); // current startTime in the future
         require(_startTime >= now);
         require(_endTime >= _startTime);
 
@@ -117,10 +131,5 @@ contract BlockportCrowdsale is CappedCrowdsale, RefundableCrowdsale, Pausable {
 
         InitialDateChange(startTime, endTime);
         return true;
-    }
-
-    //@notice Function sets the token owner to contract owner
-    function resetTokenOwnership() onlyOwner public { 
-        bpToken.transferOwnership(owner);
     }
 }
