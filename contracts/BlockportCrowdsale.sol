@@ -71,7 +71,7 @@ contract BlockportCrowdsale is CappedCrowdsale, FinalizableCrowdsale, CrowdsaleW
 
     // low level token purchase function
     function buyTokens(address beneficiary) public payable {
-        invested[beneficiary] += msg.value;
+        invested[msg.sender] += msg.value;
         super.buyTokens(beneficiary);
     }
 
