@@ -12,7 +12,6 @@ Contracts for this repo are created for the [token sale](https://blockport.io/be
 
 ### Token
 
-Parameters
 
 | Field            | Value         |
 |------------------|---------------|
@@ -26,7 +25,6 @@ Parameters
 
 ### Pre-sale
 
-Parameters
 
 | Field              	| Value                      	|
 |-----------------------|-------------------------------|
@@ -38,6 +36,7 @@ Parameters
 | Start date         	| 3 January, 2018 14:00 GMT  	|
 | End date           	| 17 January, 2018 14:00 GMT 	|
 
+
 Additional information:
 
 - Rate - how many tokens for 1 ETH (Final rate will be set on 2nd of January 2018)
@@ -45,13 +44,32 @@ Additional information:
 - "Allow modifying - Yes" means that rate, cap, minimum investment, start date, end date are modifiable.
 - "Whitelist - Yes" means that whitelist is enable and only whitelisted accounts can participate in the Pre-sale.
 
+### Crowdsale
+
+Parameters
+
+| Field              	| Value                      	|
+|-----------------------|-------------------------------|
+| Tiers              	| 1                         	|
+| Supply             	| 43.200.000 BPT               	|
+| Rate               	| 2880                      	|
+| Individual cap       	| 50 ETH                      	|
+| Minimum investment   	| 0.1 ETH                      	|
+| Allow Modifying       | Yes							|
+| Whitelist         	| Yes                        	|
+| Start date         	| 24 January, 2018 14:00 GMT  	|
+| End date           	| 28 February, 2018 14:00 GMT 	|
+
+
+Additional information:
+
+- Rate - how many tokens for 1 ETH
+- Supply - max cap of tokens for Crowdsale. Token is mintable. Unsold tokens will not be produced.
+- "Allow modifying - Yes" means that rate, cap, minimum investment, start date, end date are modifiable.
+- "Whitelist - Yes" means that whitelist is enable and only whitelisted accounts can participate in the Crowdsale.
+
 ## Deployed contracts (Source code + verified)
 
 * [Blockport Token](https://etherscan.io/token/0x327682779bab2bf4d1337e8974ab9de8275a7ca8)
 * [Blockport Presale](https://etherscan.io/address/0xb901cbb8b07e0dd7e114284ca63f4092c7683322)
-
-## Crowdsale
-
-More information about the Crowdsale contracts will follow.
-
-
+* [Blockport Crowdsale](https://etherscan.io/address/0xa6407855d9742a47386aad09f688856981d21e5b)
