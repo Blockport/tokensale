@@ -132,4 +132,10 @@ contract BlockportCrowdsale is CappedCrowdsale, FinalizableCrowdsale, CrowdsaleW
         InitialDateChange(startTime, endTime);
         return true;
     }
+
+    //@notice Function sets the token owner to contract owner
+    function resetTokenOwnership() onlyOwner public { 
+        bpToken.transferOwnership(owner);
+    }
+
 }
